@@ -4,7 +4,7 @@ use eframe::{
     egui::{self, DragValue, TextStyle},
     CreationContext,
 };
-use egui::ahash::{HashMap, HashMapExt};
+use egui::{ahash::{HashMap, HashMapExt}, Pos2};
 use serde_json::{json, Result, Value};
 use std::borrow::Cow;
 
@@ -591,6 +591,48 @@ impl eframe::App for NagaApp {
         });
         egui::SidePanel::left("Menu").show(ctx, |ui| {
             ui.label("Sosiska");
+            if  ui.button("add").clicked() {
+                    
+
+
+                    let text = self.state.graph.add_node(
+                        MyNodeTemplate::Text.node_graph_label(&mut self.user_state), 
+                        MyNodeTemplate::Text.user_data(&mut self.user_state), 
+                        |graph, node_id| {
+                            MyNodeTemplate::Text.build_node(graph, &mut self.user_state, node_id)
+                        });
+                        self.state.node_positions.insert(
+                            text,
+                            Pos2::new(0.0, 0.0),
+                                // + vec2(
+                                //     (n % 10) as f32 * 150.0,
+                                //     0.0 + (200 * (n / 10) as i32) as f32,
+                                // ),
+                        );
+                        self.state.node_order.push(text);
+
+
+                        let scaffold = self.state.graph.add_node(
+                            MyNodeTemplate::Scaffold.node_graph_label(&mut self.user_state), 
+                            MyNodeTemplate::Scaffold.user_data(&mut self.user_state), 
+                            |graph, node_id| {
+                                MyNodeTemplate::Scaffold.build_node(graph, &mut self.user_state, node_id)
+                            });
+                            self.state.node_positions.insert(
+                                scaffold,
+                                Pos2::new(300.0, 0.0),
+                                    // + vec2(
+                                    //     (n % 10) as f32 * 150.0,
+                                    //     0.0 + (200 * (n / 10) as i32) as f32,
+                                    // ),
+                            );
+                            self.state.node_order.push(scaffold);
+                    let out = self.state.graph.nodes[text].get_output("widget").unwrap();
+                    let inp = self.state.graph.nodes[scaffold].get_input("body").unwrap();
+                    self.state.graph.add_connection(out, inp);
+                    // delayed_responses.push(NodeResponse::CreatedNode(new_node));
+    
+            }
         });
         let graph_response = egui::CentralPanel::default()
             .show(ctx, |ui| {
@@ -632,6 +674,7 @@ impl eframe::App for NagaApp {
                 self.user_state.active_node = None;
             }
         }
+        
 
         // println!("{:?}", *x);
 
