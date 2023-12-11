@@ -199,21 +199,23 @@ where
             }
             node_finder_area.show(ui.ctx(), |ui| {
                 if let Some(node_kind) = node_finder.show(ui, all_kinds, user_state) {
-                    for n in 1..1000 {
-                        let new_node = self.graph.add_node(
-                            node_kind.node_graph_label(user_state),
-                            node_kind.user_data(user_state),
-                            |graph, node_id| node_kind.build_node(graph, user_state, node_id),
-                        );
-                        self.node_positions.insert(
-                            new_node,
-                            cursor_pos - self.pan_zoom.pan - editor_rect.min.to_vec2() + vec2((n % 10) as f32 * 150.0, 0.0 + (200 * (n / 10) as i32) as f32),
-                        );
-                        self.node_order.push(new_node);
+                    let new_node = self.graph.add_node(
+                        node_kind.node_graph_label(user_state),
+                        node_kind.user_data(user_state),
+                        |graph, node_id| node_kind.build_node(graph, user_state, node_id),
+                    );
+                    self.node_positions.insert(
+                        new_node,
+                        cursor_pos - self.pan_zoom.pan - editor_rect.min.to_vec2()
+                            // + vec2(
+                            //     (n % 10) as f32 * 150.0,
+                            //     0.0 + (200 * (n / 10) as i32) as f32,
+                            // ),
+                    );
+                    self.node_order.push(new_node);
 
-                        should_close_node_finder = true;
-                        delayed_responses.push(NodeResponse::CreatedNode(new_node));
-                    }
+                    should_close_node_finder = true;
+                    delayed_responses.push(NodeResponse::CreatedNode(new_node));
                 }
                 let finder_rect = ui.min_rect();
                 // If the cursor is not in the main editor, check if the cursor is in the finder
