@@ -560,6 +560,8 @@ impl eframe::App for NagaApp {
                 }
             }
         }
+        let x = &self.state.graph.nodes[self.user_state.active_node.unwrap()];
+        
         // egui::CentralPanel::default().show(ctx, |ui| {
         //     // The central panel the region left after adding TopPanel's and SidePanel's
         //     ui.heading("eframe template");
